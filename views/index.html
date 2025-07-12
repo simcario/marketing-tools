@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail Tool - Gestione Template Email</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/jodit-custom.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-envelope me-2"></i>Mail Tool
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="#" onclick="showSection('templates', event)">
+                    <i class="fas fa-file-alt me-1"></i>Template
+                </a>
+                <a class="nav-link" href="#" onclick="showSection('recipients', event)">
+                    <i class="fas fa-users me-1"></i>Destinatari
+                </a>
+                <a class="nav-link" href="#" onclick="showSection('campaigns', event)">
+                    <i class="fas fa-paper-plane me-1"></i>Campagne
+                </a>
+                <a class="nav-link" href="#" onclick="showSection('configurations', event)">
+                    <i class="fas fa-cog me-1"></i>Configurazione
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Sezione Template -->
+        <div id="templates-section" class="section">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Template Email</h5>
+                            <button class="btn btn-primary btn-sm" onclick="showNewTemplateForm()">
+                                <i class="fas fa-plus"></i> Nuovo
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="templates-list" class="list-group">
+                                <!-- Template list will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Editor Template</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="template-form">
+                                <div class="mb-3">
+                                    <label for="template-name" class="form-label">Nome Template</label>
+                                    <input type="text" class="form-control" id="template-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="template-subject" class="form-label">Oggetto Email</label>
+                                    <input type="text" class="form-control" id="template-subject" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contenuto Email</label>
+                                </div>
+                                <textarea id="jodit-editor" style="height: 300px;"></textarea>
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <strong>Variabili disponibili:</strong> {{nome}}, {{email}}, {{categoria}} | 
+                                        <strong>Pulsante HTML:</strong> Usa il pulsante "Source" nella toolbar per visualizzare e modificare il codice HTML
+                                    </small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Salva Template
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="clearTemplateForm()">
+                                        <i class="fas fa-times"></i> Annulla
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione Destinatari -->
+        <div id="recipients-section" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Carica Destinatari</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="upload-form">
+                                <div class="mb-3">
+                                    <label for="csv-file" class="form-label">File CSV</label>
+                                    <input type="file" class="form-control" id="csv-file" accept=".csv" required>
+                                    <div class="form-text">
+                                        Il file deve contenere: email, nome, categoria
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-upload"></i> Carica CSV
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Filtra per Categoria</h5>
+                        </div>
+                        <div class="card-body">
+                            <select id="category-filter" class="form-select mb-3">
+                                <option value="">Tutte le categorie</option>
+                            </select>
+                            <div id="recipients-stats" class="text-center">
+                                <!-- Stats will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <h5 class="mb-0">Lista Destinatari</h5>
+                                <select id="category-filter" class="form-select form-select-sm ms-2" style="width:auto;">
+                                    <option value="">Tutte le categorie</option>
+                                </select>
+                            </div>
+                            <button id="delete-selected-recipients-btn" class="btn btn-danger btn-sm" style="display:none;" onclick="showDeleteSelectedRecipientsModal()" disabled>
+                                <i class="fas fa-trash"></i> Elimina selezionati
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="select-all-recipients"></th>
+                                            <th>Email</th>
+                                            <th>Nome</th>
+                                            <th>Categoria</th>
+                                            <th>Stato</th>
+                                            <th>Data Invio</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recipients-table">
+                                        <!-- Recipients will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal conferma eliminazione selezionati -->
+        <div class="modal fade" id="deleteSelectedRecipientsModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Conferma Eliminazione Selezionati</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        Sei sicuro di voler eliminare i destinatari selezionati?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteSelectedRecipients">Elimina selezionati</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione Campagne -->
+        <div id="campaigns-section" class="section" style="display: none;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Nuova Campagna</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="campaign-form">
+                                <div class="mb-3">
+                                    <label for="campaign-template" class="form-label">Template</label>
+                                    <select class="form-select" id="campaign-template" required>
+                                        <option value="">Seleziona template...</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="campaign-category" class="form-label">Categoria Destinatari</label>
+                                    <select class="form-select" id="campaign-category" required>
+                                        <option value="">Seleziona categoria...</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="campaign-count" class="form-label">Numero Destinatari</label>
+                                    <input type="number" class="form-control" id="campaign-count" min="1" value="100">
+                                    <div class="form-text">Lascia vuoto per inviare a tutti</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="campaign-delay" class="form-label">Ritardo tra invii (secondi)</label>
+                                    <input type="number" class="form-control" id="campaign-delay" min="1" value="10">
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-paper-plane"></i> Avvia Invio
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Stato Campagne</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="campaigns-list">
+                                <!-- Campaigns will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sezione Configurazione -->
+    <div id="configurations-section" class="section" style="display: none;">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Configurazioni Email</h5>
+                        <button class="btn btn-primary btn-sm" onclick="showNewConfigurationForm()">
+                            <i class="fas fa-plus"></i> Nuova
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="configurations-list" class="list-group">
+                            <!-- Configurations list will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Editor Configurazione</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="configuration-form">
+                            <div class="mb-3">
+                                <label for="config-name" class="form-label">Nome Configurazione</label>
+                                <input type="text" class="form-control" id="config-name" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="config-host" class="form-label">Host SMTP</label>
+                                        <input type="text" class="form-control" id="config-host" required>
+                                        <div class="form-text">Es: smtp.gmail.com</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="config-port" class="form-label">Porta</label>
+                                        <input type="number" class="form-control" id="config-port" required>
+                                        <div class="form-text">Es: 587 per Gmail</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="config-user" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="config-user" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="config-pass" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="config-pass" required>
+                                        <div class="form-text">Per Gmail usa App Password</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="config-from" class="form-label">Email Mittente</label>
+                                <input type="email" class="form-control" id="config-from" required>
+                                <div class="form-text">Email che apparirà come mittente</div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="config-active">
+                                    <label class="form-check-label" for="config-active">
+                                        Attiva questa configurazione
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Salva Configurazione
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="clearConfigurationForm()">
+                                    <i class="fas fa-times"></i> Annulla
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per conferma eliminazione template -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma Eliminazione Template</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Sei sicuro di voler eliminare questo template?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per conferma eliminazione campagna -->
+    <div class="modal fade" id="deleteCampaignModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma Eliminazione Campagna</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Sei sicuro di voler eliminare questa campagna? Questa azione non può essere annullata.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteCampaign">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per conferma eliminazione configurazione -->
+    <div class="modal fade" id="deleteConfigurationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Conferma Eliminazione Configurazione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Sei sicuro di voler eliminare questa configurazione? Questa azione non può essere annullata.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteConfiguration">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal avanzamento invio campagne -->
+    <div class="modal fade" id="progressModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Invio Email in corso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="progress">
+                            <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Email attuale:</strong> <span id="progress-current-email">-</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Inviate:</strong> <span id="progress-sent">0</span> / <span id="progress-total">0</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Errori:</strong>
+                        <ul id="progress-errors" class="text-danger small mb-0"></ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    <button type="button" class="btn btn-danger" id="cancelCampaignBtn">Annulla invio</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@3.20.2/build/jodit.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jodit@3.20.2/build/jodit.min.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html> 

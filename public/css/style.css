@@ -1,0 +1,248 @@
+/* Stili personalizzati per Mail Tool */
+
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.list-group-item {
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.template-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.template-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Editor Quill personalizzato */
+.ql-editor {
+    min-height: 250px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ql-toolbar {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.ql-container {
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+/* Statistiche destinatari */
+.stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.stats-label {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+/* Stato destinatari */
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-sent {
+    background-color: #d1edff;
+    color: #0c5460;
+}
+
+.status-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Campagne */
+.campaign-item {
+    position: relative;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: white;
+}
+
+.campaign-status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.campaign-actions {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    z-index: 2;
+}
+.campaign-item:hover .campaign-actions,
+.campaign-actions:focus-within {
+    opacity: 1;
+}
+.campaign-actions .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+.campaign-actions .btn[disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* Configurazioni */
+.configuration-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.configuration-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.configuration-actions .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.campaign-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.campaign-status.completed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.campaign-status.partial {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.campaign-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.campaign-status.completed_with_errors {
+    background-color: #ffe5b4;
+    color: #b26a00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .template-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .btn-sm {
+        width: 100%;
+    }
+}
+
+/* Animazioni */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading spinner */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert personalizzati */
+.alert-custom {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Form personalizzati */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+} 

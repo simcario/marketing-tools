@@ -1,0 +1,119 @@
+/* Stili personalizzati per Jodit Editor */
+.jodit-container {
+    border-radius: 0.375rem;
+    border: 1px solid #dee2e6;
+}
+
+.jodit-toolbar {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.jodit-toolbar__box {
+    background-color: transparent;
+}
+
+.jodit-ui-button {
+    border-radius: 0.25rem;
+    margin: 2px;
+}
+
+.jodit-ui-button:hover {
+    background-color: #e9ecef;
+}
+
+.jodit-ui-button__icon {
+    color: #6c757d;
+}
+
+.jodit-ui-button:hover .jodit-ui-button__icon {
+    color: #495057;
+}
+
+.jodit-workplace {
+    border-radius: 0 0 0.375rem 0.375rem;
+}
+
+.jodit-wysiwyg {
+    padding: 1rem;
+    min-height: 200px;
+}
+
+/* Stili per il pulsante Source */
+.jodit-ui-button[data-name="source"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.jodit-ui-button[data-name="source"]:hover {
+    background-color: #5a6268;
+}
+
+.jodit-ui-button[data-name="source"] .jodit-ui-button__icon {
+    color: white;
+}
+
+/* Stili per il modal di Jodit */
+.jodit-dialog {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.jodit-dialog__header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.jodit-dialog__body {
+    padding: 1rem;
+}
+
+.jodit-dialog__footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 0.5rem 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+/* Stili per il textarea in modalità source */
+.jodit-source__mirror {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .jodit-toolbar {
+        flex-wrap: wrap;
+    }
+    
+    .jodit-ui-button {
+        margin: 1px;
+    }
+    
+    .jodit-wysiwyg {
+        padding: 0.5rem;
+    }
+}
+
+/* Stili per il focus */
+.jodit-container:focus-within {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Stili per la barra di stato */
+.jodit-status-bar {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-radius: 0 0 0.375rem 0.375rem;
+    font-size: 12px;
+    color: #6c757d;
+} 
